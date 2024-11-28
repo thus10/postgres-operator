@@ -1,26 +1,37 @@
 <h1>Administrator Guide</h1>
 
 Learn how to configure and manage the Postgres Operator in your Kubernetes (K8s)
-environment.
+environment.\
+了解如何在 Kubernetes (K8s) 环境中配置和管理 Postgres Operator。
 
-## CRD registration and validation
+## CRD registration and validation 
 
 On startup, the operator will try to register the necessary
 [CustomResourceDefinitions](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#customresourcedefinitions)
-`Postgresql` and `OperatorConfiguration`. The latter will only get created if
+`Postgresql` and `OperatorConfiguration`. \
+（1）启动时，操作员将尝试注册必要的CRD：Postgresql 和 OperatorConfiguration。
+
+The latter will only get created if
 the `POSTGRES_OPERATOR_CONFIGURATION_OBJECT` [environment variable](https://github.com/zalando/postgres-operator/blob/master/manifests/postgres-operator.yaml#L36)
-is set in the deployment yaml and is not empty. If the CRDs already exists they
+is set in the deployment yaml and is not empty. \
+（2）然后只会在这个变量在部署yaml中设置且非空的情况下创建。
+
+If the CRDs already exists they
 will only be patched. If you do not wish the operator to create or update the
-CRDs set `enable_crd_registration` config option to `false`.
+CRDs set `enable_crd_registration` config option to `false`. \
+（3）如果 CRD 已经存在，则只会对其进行修补。如果您不希望操作员创建或更新CRD，请将`enable_crd_registration`配置选项设置为`false`。
 
 CRDs are defined with a `openAPIV3Schema` structural schema against which new
 manifests of [`postgresql`](https://github.com/zalando/postgres-operator/blob/master/manifests/postgresql.crd.yaml) or [`OperatorConfiguration`](https://github.com/zalando/postgres-operator/blob/master/manifests/operatorconfiguration.crd.yaml)
 resources will be validated. On creation you can bypass the validation with
-`kubectl create --validate=false`.
+`kubectl create --validate=false`.\
+CRD 使用 `openAPIV3Schema` 结构模式定义，将根据该模式验证 [`postgresql`] 或 [`OperatorConfiguration`]
+资源的新清单。创建时，您可以使用 `kubectl create --validate=false` 绕过验证。
 
 By default, the operator will register the CRDs in the `all` category so
 that resources are listed on `kubectl get all` commands. The `crd_categories`
-config option allows for customization of categories.
+config option allows for customization of categories.\
+默认情况下，操作员将在“all”类别中注册 CRD，以便“kubectl get all”命令中列出资源。“crd_categories”配置选项允许自定义类别。
 
 ## Upgrading the operator
 
