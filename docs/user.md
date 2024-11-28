@@ -1,11 +1,13 @@
 <h1>User Guide</h1>
 
-Learn how to work with the Postgres Operator in a Kubernetes (K8s) environment.
+Learn how to work with the Postgres Operator in a Kubernetes (K8s) environment.\
+学习如何在 Kubernetes (K8s) 环境中使用 Postgres Operator。
 
 ## Create a manifest for a new PostgreSQL cluster
 
 Make sure you have [set up](quickstart.md) the operator. Then you can create a
-new Postgres cluster by applying manifest like this [minimal example](https://github.com/zalando/postgres-operator/blob/master/manifests/minimal-postgres-manifest.yaml):
+new Postgres cluster by applying manifest like this [minimal example](https://github.com/zalando/postgres-operator/blob/master/manifests/minimal-postgres-manifest.yaml):\
+确保您已[set up](quickstart.md)了operator。然后您可以通过应用如下[最小示例]的清单来创建一个新的 Postgres 集群：
 
 ```yaml
 apiVersion: "acid.zalan.do/v1"
@@ -34,7 +36,8 @@ spec:
 ```
 
 Once you cloned the Postgres Operator [repository](https://github.com/zalando/postgres-operator)
-you can find this example also in the manifests folder:
+you can find this example also in the manifests folder:\
+克隆 Postgres Operator 后，您还可以在清单文件夹中找到此示例：
 
 ```bash
 kubectl create -f manifests/minimal-postgres-manifest.yaml
@@ -43,27 +46,33 @@ kubectl create -f manifests/minimal-postgres-manifest.yaml
 Make sure, the `spec` section of the manifest contains at least a `teamId`, the
 `numberOfInstances` and the `postgresql` object with the `version` specified.
 The minimum volume size to run the `postgresql` resource on Elastic Block
-Storage (EBS) is `1Gi`.
+Storage (EBS) is `1Gi`.\
+确保清单的“spec”部分至少包含“teamId”、“numberOfInstances”和指定“version”的“postgresql”对象。在弹性块存储 (EBS) 上运行“postgresql”资源的最小卷大小为“1Gi”。
 
 Note, that when `enable_team_id_clustername_prefix` is set to `true` the name
 of the cluster must start with the `teamId` and `-`. At Zalando we use team IDs
 (nicknames) to lower chances of duplicate cluster names and colliding entities.
 The team ID would also be used to query an API to get all members of a team
 and create [database roles](#teams-api-roles) for them. Besides, the maximum
-cluster name length is 53 characters.
+cluster name length is 53 characters.\
+请注意，当“enable_team_id_clustername_prefix”设置为“true”时，集群名称必须以“teamId”和“-”开头。在 Zalando，我们使用团队 ID（昵称）来降低重复集群名称和冲突实体的可能性。团队 ID 还可用于查询 API 以获取团队的所有成员并为他们创建[数据库角色](#teams-api-roles)。此外，最大集群名称长度为 53 个字符。
+
+
 
 ## Watch pods being created
 
 Check if the database pods are coming up. Use the label `application=spilo` to
 filter and list the label `spilo-role` to see when the master is promoted and
-replicas get their labels.
+replicas get their labels.\
+检查数据库 Pod 是否正在启动。使用标签`application=spilo`进行筛选并列出标签`spilo-role`以查看主节点何时晋升以及副本何时获得标签。
 
 ```bash
 kubectl get pods -l application=spilo -L spilo-role -w
 ```
 
 The operator also emits K8s events to the Postgresql CRD which can be inspected
-in the operator logs or with:
+in the operator logs or with:\
+operator还会向 Postgresql CRD 发出 K8s 事件，这些事件可以在操作员日志中或使用以下方式检查：
 
 ```bash
 kubectl describe postgresql acid-minimal-cluster
@@ -73,7 +82,8 @@ kubectl describe postgresql acid-minimal-cluster
 
 With a `port-forward` on one of the database pods (e.g. the master) you can
 connect to the PostgreSQL database from your machine. Use labels to filter for
-the master pod of our test cluster.
+the master pod of our test cluster.\
+通过其中一个数据库 Pod（例如主节点）上的“端口转发”，您可以从您的计算机连接到 PostgreSQL 数据库。使用标签来过滤我们测试集群的主 Pod。
 
 ```bash
 # get name of master pod of acid-minimal-cluster
@@ -86,7 +96,9 @@ kubectl port-forward $PGMASTER 6432:5432 -n default
 Open another CLI and connect to the database using e.g. the psql client.
 When connecting with a manifest role like `foo_user` user, read its password
 from the K8s secret which was generated when creating `acid-minimal-cluster`.
-As non-encrypted connections are rejected by default set SSL mode to `require`:
+As non-encrypted connections are rejected by default set SSL mode to `require`:\
+打开另一个 CLI 并使用例如连接到数据库psql 客户端。当与“foo_user”用户等清单角色连接时，从创建“acid-minimal-cluster”时生成的 K8s 密钥中读取其密码。由于默认情况下会拒绝非加密连接，因此将 SSL 模式设置为“require”：
+
 
 ```bash
 export PGPASSWORD=$(kubectl get secret postgres.acid-minimal-cluster.credentials.postgresql.acid.zalan.do -o 'jsonpath={.data.password}' | base64 -d)
