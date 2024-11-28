@@ -1,7 +1,8 @@
 <h1>Concepts</h1>
 
 The Postgres [operator](https://coreos.com/blog/introducing-operators.html)
-manages PostgreSQL clusters on Kubernetes (K8s):
+manages PostgreSQL clusters on Kubernetes (K8s):\
+Postgres Operator 管理 Kubernetes (K8s) 上的 PostgreSQL 集群：
 
 1. The operator watches additions, updates, and deletions of PostgreSQL cluster
    manifests and changes the running clusters accordingly.  For example, when a
@@ -9,20 +10,23 @@ manages PostgreSQL clusters on Kubernetes (K8s):
    new Postgres cluster along with all necessary entities such as K8s
    StatefulSets and Postgres roles.  See this
    [Postgres cluster manifest](https://github.com/zalando/postgres-operator/blob/master/manifests/complete-postgres-manifest.yaml)
-   for settings that a manifest may contain.
+   for settings that a manifest may contain.\
+   1. operator监视PostgreSQL集群清单的添加、更新和删除，并相应地更改正在运行的集群。
+   例如，当用户提交新的清单时，操作员会获取该清单并生成一个新的 Postgres 集群以及所有必要的实体（例如 K8s StatefulSets 和 Postgres 角色）。请参阅此 [Postgres集群清单](manifests/complete-postgres-manifest.yaml)了解清单可能包含的设置。
 
 2. The operator also watches updates to [its own configuration](https://github.com/zalando/postgres-operator/blob/master/manifests/configmap.yaml)
    and alters running Postgres clusters if necessary.  For instance, if the
    Docker image in a pod is changed, the operator carries out the rolling
    update, which means it re-spawns pods of each managed StatefulSet one-by-one
-   with the new Docker image.
+   with the new Docker image.\
+   2. Operator 还会监视[其自身配置](manifests/configmap.yaml) 的更新，并在必要时更改正在运行的 Postgres 集群。  例如，如果 Pod 中的 Docker 镜像发生更改，Operator 会执行滚动更新，这意味着它会使用新的 Docker 镜像一一重新生成每个托管 StatefulSet 的 Pod。
 
-3. Finally, the operator periodically synchronizes the actual state of each
-   Postgres cluster with the desired state defined in the cluster's manifest.
+3. Finally, the operator periodically synchronizes the actual state of each Postgres cluster with the desired state defined in the cluster's manifest.\
+   3. 最后，operator定期同步各个节点的实际状态。Postgres 集群具有集群清单中定义的所需状态。
 
-4. The operator aims to be hands free as configuration works only via manifests.
-   This enables easy integration in automated deploy pipelines with no access to
-   K8s directly.
+4. The operator aims to be hands free as configuration works only via manifests. This enables easy integration in automated deploy pipelines with no access to K8s directly.\
+   4. operator的目标是解放双手，因为配置只能通过清单进行。这使得可以轻松集成到自动化部署管道中，而无需直接访问 K8。
+
 
 ## Scope
 
@@ -34,12 +38,14 @@ and role provisioning once the cluster is up and running. We try to leave as
 much work as possible to K8s and to Patroni where it fits, especially
 the cluster bootstrap and high availability. The operator is however involved
 in some overarching orchestration, like rolling updates to improve the user
-experience.
+experience.\
+Postgres Operator 的作用范围包括提供、修改配置和清理使用 Patroni 的 Postgres 集群，基本上是为了让在 K8s 上运行基于 Patroni 的集群变得简单方便。提供和修改包括 K8s 资源的一侧，但也包括例如数据库和角色提供，一旦集群启动并运行。我们尽量将尽可能多的工作留给 K8s 和 Patroni，特别是在集群引导和高可用性方面。然而，该操作员也参与一些全局编排，如滚动更新以改善用户体验。
 
 Monitoring or tuning Postgres is not in scope of the operator in the current
 state. However, with globally configurable sidecars we provide enough
 flexibility to complement it with other tools like [ZMON](https://opensource.zalando.com/zmon/),
-[Prometheus](https://prometheus.io/) or more Postgres specific options.
+[Prometheus](https://prometheus.io/) or more Postgres specific options.\
+监控或调整 Postgres 不在当前操作员的范围内。然而，通过全局可配置的sidecars，我们提供了足够的灵活性，可以与其他工具如[ZMON]、[Prometheus]或更多针对 Postgres 的特定选项相补充。
 
 
 ## Overview of involved entities
@@ -65,7 +71,8 @@ in order to run Postgres clusters on K8s in larger numbers for staging
 environments and a growing number of production clusters. In this environment
 the operator is deployed to multiple K8s clusters, where users deploy
 manifests via our CI/CD infrastructure or rely on a slim user interface to
-create manifests.
+create manifests.\
+该项目目前正在积极开发中。然而，它已经[被 Zalando 内部使用]，以便在 K8 上大量运行 Postgres 集群临时环境和越来越多的生产集群。在此环境中，操作员部署到多个 K8s 集群，用户通过我们的 CI/CD 基础设施部署清单或依靠精简的用户界面来创建清单。
 
 Please, report any issues discovered to https://github.com/zalando/postgres-operator/issues.
 

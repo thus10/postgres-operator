@@ -1,13 +1,16 @@
 <h1>Quickstart</h1>
 
 This guide aims to give you a quick look and feel for using the Postgres
-Operator on a local Kubernetes environment.
+Operator on a local Kubernetes environment.\
+本指南旨在让您快速了解在本地 Kubernetes 环境中使用 Postgres
+Operator 的方法。
 
 ## Prerequisites
 
 Since the Postgres Operator is designed for the Kubernetes (K8s) framework,
 hence set it up first. For local tests we recommend to use one of the following
-solutions:
+solutions:\
+由于 Postgres Operator 是为 Kubernetes (K8s) 框架设计的，因此请先进行设置。对于本地测试，我们建议使用以下解决方案之一：
 
 * [minikube](https://github.com/kubernetes/minikube/releases), which creates a
   single-node K8s cluster inside a VM (requires KVM or VirtualBox),
@@ -20,14 +23,17 @@ This quickstart assumes that you have started minikube or created a local kind
 cluster. Note that you can also use built-in K8s support in the Docker Desktop
 for Mac to follow the steps of this tutorial. You would have to replace
 `minikube start` and `minikube delete` with your launch actions for the Docker
-built-in K8s support.
+built-in K8s support.\
+本快速入门假设您已启动 minikube 或创建了本地类型集群。请注意，您还可以使用 Docker Desktop for Mac 中的内置 K8s 支持来执行本教程的步骤。您必须将“minikube start”和“minikube delete”替换为您的启动操作，以获得 Docker 内置 K8s 支持。
 
 ## Configuration Options
 
 Configuring the Postgres Operator is only possible before deploying a new
 Postgres cluster. This can work in two ways: via a ConfigMap or a custom
 `OperatorConfiguration` object. More details on configuration can be found
-[here](reference/operator_parameters.md).
+[here](reference/operator_parameters.md).\
+只有在部署新的 Postgres Operator 之前才可以配置 Postgres 集群。这可以通过两种方式工作：通过 ConfigMap 或自定义
+`OperatorConfiguration` 对象。有关配置的更多详细信息，请参阅 operator_parameters.md。
 
 ## Deployment options
 
@@ -41,7 +47,8 @@ The Postgres Operator can be deployed in the following ways:
 
 The Postgres Operator can be installed simply by applying yaml manifests. Note,
 we provide the `/manifests` directory as an example only; you should consider
-adjusting the manifests to your K8s environment (e.g. namespaces).
+adjusting the manifests to your K8s environment (e.g. namespaces).\
+只需应用 yaml 清单即可安装 Postgres Operator。请注意，我们提供的“/manifests”目录仅作为示例；您应该考虑根据您的 K8s 环境（例如命名空间）调整清单。
 
 ```bash
 # First, clone the repository and change to the directory
@@ -170,7 +177,8 @@ Available option are explained in detail in the [UI docs](operator-ui.md).
 ## Create a Postgres cluster
 
 If the operator pod is running it listens to new events regarding `postgresql`
-resources. Now, it's time to submit your first Postgres cluster manifest.
+resources. Now, it's time to submit your first Postgres cluster manifest.\
+如果 Operator pod 正在运行，它会侦听有关“postgresql”资源的新事件。现在，是时候提交您的第一个 Postgres 集群清单了。
 
 ```bash
 # create a Postgres cluster
@@ -185,7 +193,8 @@ suffix, starting from `-0`. They run the [Spilo](https://github.com/zalando/spil
 container image by Zalando. As for the services and endpoints, there will be one
 for the master pod and another one for all the replicas (`-repl` suffix). Check
 if all components are coming up. Use the label `application=spilo` to filter and
-list the label `spilo-role` to see who is currently the master.
+list the label `spilo-role` to see who is currently the master.\
+提交集群清单并通过验证后，operator将创建服务和端点资源以及 StatefulSet，根据清单中指定的实例数量，该 StatefulSet 会启动新的 Pod。所有资源都像集群一样命名。数据库 Pod 可以通过从“-0”开始的编号后缀来标识。他们运行 Zalando 的Spilo容器映像。至于服务和端点，一个用于主 Pod，另一个用于所有副本（“-repl”后缀）。检查所有组件是否都已启动。使用标签`application=spilo`过滤并列出标签`spilo-role`来查看当前谁是master。
 
 ```bash
 # check the deployed cluster
@@ -203,7 +212,8 @@ kubectl get svc -l application=spilo -L spilo-role
 You can create a port-forward on a database pod to connect to Postgres. See the
 [user guide](user.md#connect-to-postgresql) for instructions. With minikube it's
 also easy to retrieve the connections string from the K8s service that is
-pointing to the master pod:
+pointing to the master pod:\
+您可以在数据库 Pod 上创建端口转发以连接到 Postgres。有关说明，请参阅[用户指南](user.md#connect-to-postgresql)。使用 minikube，还可以轻松地从 K8s 服务检索指向 master pod 的连接字符串：
 
 ```bash
 export HOST_PORT=$(minikube service acid-minimal-cluster --url | sed 's,.*/,,')
@@ -213,7 +223,9 @@ export PGPORT=$(echo $HOST_PORT | cut -d: -f 2)
 
 Retrieve the password from the K8s Secret that is created in your cluster.
 Non-encrypted connections are rejected by default, so set the SSL mode to
-require:
+require:\
+从集群中创建的 K8s Secret 中检索密码。
+默认情况下会拒绝非加密连接，因此将 SSL 模式设置为 require：
 
 ```bash
 export PGPASSWORD=$(kubectl get secret postgres.acid-minimal-cluster.credentials.postgresql.acid.zalan.do -o 'jsonpath={.data.password}' | base64 -d)
@@ -223,7 +235,8 @@ psql -U postgres
 
 ## Delete a Postgres cluster
 
-To delete a Postgres cluster simply delete the `postgresql` custom resource.
+To delete a Postgres cluster simply delete the `postgresql` custom resource.\
+要删除 Postgres 集群，只需删除“postgresql”自定义资源即可。
 
 ```bash
 kubectl delete postgresql acid-minimal-cluster
@@ -231,10 +244,16 @@ kubectl delete postgresql acid-minimal-cluster
 
 This should remove the associated StatefulSet, database Pods, Services and
 Endpoints. The PersistentVolumes are released and the PodDisruptionBudget is
-deleted. Secrets however are not deleted and backups will remain in place.
+deleted. Secrets however are not deleted and backups will remain in place.\
+这应该删除关联的 StatefulSet、数据库 Pod、服务和端点。
+PV 被释放，PodDisruptionBudget 被删除。
+然而，Secrets不会被删除，备份将保留在原处。
+
 
 When deleting a cluster while it is still starting up or got stuck during that
 phase it can [happen](https://github.com/zalando/postgres-operator/issues/551)
 that the `postgresql` resource is deleted leaving orphaned components behind.
 This can cause troubles when creating a new Postgres cluster. For a fresh setup
-you can delete your local minikube or kind cluster and start again.
+you can delete your local minikube or kind cluster and start again.\
+在集群仍在启动或在此期间卡住时删除集群阶段可能会发生“postgresql”资源被删除而留下孤立组件的情况。
+这可能会在创建新的 Postgres 集群时造成麻烦。对于全新设置，您可以删除本地 minikube 或 kind 集群并重新开始。
