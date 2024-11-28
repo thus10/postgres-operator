@@ -5,3 +5,5 @@ resources:
 - operator-service-account-rbac.yaml
 - postgres-operator.yaml
 - api-service.yaml
+
+# 入口文件
